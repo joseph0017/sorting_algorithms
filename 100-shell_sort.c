@@ -1,41 +1,43 @@
 #include "sort.h"
 
 /**
-*max_gap - the positions of two elements into an array
-*@array: array
-*@item1: array element
-*@item2: array element
-*/
-void max_gap(int *array, int item1, int item2)
+ * max_gap - return maximus of gap
+ * @size: lengeth in the array
+ * Return: value size
+ */
+
+size_t max_gap(size_t size)
 {
+	size_t count = 1;
 
-	int tmp;
-
-	tmp = array[item1];
-	array[item1] = array[item2];
-	array[item2] = tmp;
+	while (count < size)
+		count = count * 3 + 1;
+	return ((count - 1) / 3);
 }
+
 /**
- * shell_sort - function that sorts an array of integers in ascending
- * order using the Shell sort algorithm, using the Knuth sequence
- * @size: size of the array
- * @array: list with numbers
+ * shell_sort - that sorts a doubly linked list of integers
+ * @array: Pointers with data
+ * @size: size value the lengeth
  */
 void shell_sort(int *array, size_t size)
 {
-	size_t gap = 1, i, index = 0;
+	size_t gap, i, j;
+	int temp;
 
-	if (array == NULL || size < 2)
+	if (!array || !size)
 		return;
-	while (gap < size / 3)
-		gap = 3 * gap + 1;
-	while (gap >= 1)
+
+	for (gap = max_gap(size); gap; gap = (gap - 1) / 3)
 	{
 		for (i = gap; i < size; i++)
-			for (index = i; index >= gap &&
-			 (array[index] < array[index - gap]); index -= gap)
-				max_gap(array, index, index - gap);
+		{
+			temp = array[i];
+
+			for (j = i; j > gap - 1 && array[j - gap] > temp; j -= gap)
+				array[j] = array[j - gap];
+			array[j] = temp;
+		}
 		print_array(array, size);
-		gap /= 3;
 	}
 }

@@ -1,47 +1,46 @@
 #include "sort.h"
-/**
- * insertion_sort_list - function that sorts a doubly linked list
- * of integers in ascending order using the Insertion sort algorithm
- * @list: Dobule linked list to sort
- */
-void insertion_sort_list(listint_t **list)
-{
-	listint_t *node;
 
-	if (list == NULL || (*list)->next == NULL)
-		return;
-	node = (*list)->next;
-	while (node)
-	{
-		while ((node->prev) && (node->prev->n > node->n))
-		{
-			node = swap_node(node, list);
-			print_list(*list);
-		}
-		node = node->next;
-	}
+/**
+ * swap - that sorts a doubly linked list of integers
+ * @list: doubly Pointers
+ * @min: pointers with the value min
+ * @max: Doubly Pointers the value
+ */
+void swap(listint_t **list, listint_t *min, listint_t **max)
+{
+	(*max)->next = min->next;
+	if (min->next)
+		min->next->prev = *max;
+	min->prev = (*max)->prev;
+	min->next = *max;
+	if ((*max)->prev)
+		(*max)->prev->next = min;
+	else
+		*list = min;
+	(*max)->prev = min;
+	*max = min->prev;
+	print_list(*list);
 }
 
 /**
- *swap_node - swaps a node for the previous one
- *@node: node
- *@list: node list
- *Return: return a pointer to a node which was enter it
+ * insertion_sort_list - that sorts a doubly linked list
+ * @list: doubly Pointers
  */
-
-listint_t *swap_node(listint_t *node, listint_t **list)
+void insertion_sort_list(listint_t **list)
 {
-	listint_t *back = node->prev, *current = node;
+	listint_t *min, *max, *temp;
 
-	back->next = current->next;
-	if (current->next)
-		current->next->prev = back;
-	current->next = back;
-	current->prev = back->prev;
-	back->prev = current;
-	if (current->prev)
-		current->prev->next = current;
-	else
-		*list = current;
-	return (current);
+	if (!list || !*list || !(*list)->next)
+		return;
+
+	for (min = (*list)->next; min; min = temp)
+	{
+		temp = min->next;
+		max = min->prev;
+
+		while (max && min->n < max->n)
+		{
+			swap(list, min, &max);
+		}
+	}
 }

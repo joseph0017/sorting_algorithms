@@ -11,39 +11,40 @@ void swap(int *array, size_t size, int *a, int *b)
 {
 	int temp;
 
-	if (*a != *b)
-	{
 		temp = *a;
 		*a = *b;
 		*b = temp;
 		print_array(array, size);
-	}
 }
 
 /**
- * lomuto - partition scheme.
+ * hoare - partition scheme.
  * @array: pointer array in integers
  * @size: ssize with the array
  * @left: ssize with the array left
- * @right:ssize_t with the array right
+ * @right: int with the array right
  * Return: Always integers
  */
-int lomuto(int *array, size_t size, ssize_t left, ssize_t right)
+int hoare(int *array, ssize_t size, ssize_t left, ssize_t right)
 {
-	ssize_t low = left - 1, fast;
-	int pivot = array[right];
+	int pivot;
+	ssize_t asc, des;
 
-	for (fast = left; fast <= right - 1; fast++)
+	pivot = array[right];
+	for (asc = left - 1, des = right + 1; asc < des; )
 	{
-		if (array[fast] <= pivot)
-		{
-			low += 1;
-			swap(array, size, &array[low], &array[fast]);
-		}
+		do {
+			asc++;
+		} while (array[asc] < pivot);
+
+		do {
+			des--;
+		} while (array[des] > pivot);
+
+		if (asc < des)
+			swap(array, size, array + asc, array + des);
 	}
-	/**if (fast > right)**/
-	swap(array, size, &array[low + 1], &array[right]);
-	return (low + 1);
+	return (asc);
 }
 
 /**
@@ -51,27 +52,26 @@ int lomuto(int *array, size_t size, ssize_t left, ssize_t right)
  * @array: pointer array in integers
  * @size: ssize with the array
  * @left: ssize with the array left
- * @right:ssize_t with the array right
+ * @right: int with the array right
  */
 void quick_sort_recursion(int *array, size_t size, ssize_t left, ssize_t right)
 {
-	size_t part;
+	ssize_t part;
 
-	if (left < right)
+	if (right > left)
 	{
-		part = lomuto(array, size, left, right);
-
+		part = hoare(array, size, left, right);
 		quick_sort_recursion(array, size, left, part - 1);
-		quick_sort_recursion(array, size, part + 1, right);
+		quick_sort_recursion(array, size, part, right);
 	}
 }
 
 /**
- * quick_sort - selection value in array
+ * quick_sort_hoare - selection value in array
  * @array: pointers in integer
  * @size: value data
  */
-void quick_sort(int *array, size_t size)
+void quick_sort_hoare(int *array, size_t size)
 {
 	if (!array || size < 2)
 		return;

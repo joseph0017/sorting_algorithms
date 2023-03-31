@@ -1,1 +1,1 @@
-# sorting_algorithms
+alx sorting algorithm

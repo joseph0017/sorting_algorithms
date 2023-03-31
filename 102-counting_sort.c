@@ -1,43 +1,66 @@
 #include "sort.h"
+
 /**
- * counting_sort - sorts an array of integers in ascending
- * order using the Counting sort algorithm
- * @array: pointer to array
- * @size: size of the array
- **/
+ * max_num - function reutrn max integer
+ * @array: pointers array
+ * @size: size value the lengeth
+ * Return: integer data
+ */
+int max_num(int *array, int size)
+{
+	int max_num, j;
+
+	for (max_num = array[0], j = 1; j < size; j++)
+	{
+		if (array[j] > max_num)
+			max_num = array[j];
+	}
+	return (max_num);
+}
+
+/**
+ * counting_sort - function counting function
+ * @array: pointers array
+ * @size: size value the lengeth
+ * Return: integer data
+ */
 void counting_sort(int *array, size_t size)
 {
-	int n, j, *count_array, *aux;
-	size_t i;
+	int *count, *final, max, index;
 
 	if (!array || size < 2)
 		return;
-	n = array[0];
-	for (i = 0; i < size; i++)
+
+	final = malloc(sizeof(int) * size);
+	if (final == NULL)
+		return;
+
+	max = max_num(array, size);
+	count = malloc(sizeof(int) * (max + 1));
+	if (count == NULL)
 	{
-		if (array[i] > n)
-			n = array[i];
+		free(final);
+		return;
 	}
-	count_array = calloc((n + 1), sizeof(int));
-	for (i = 0; i < size; i++)
+	for (index = 0; count[index]; index++)
+		count[index] = 0;
+
+	for (index = 0; index < (int)size; index++)
+		count[array[index]] += 1;
+
+	for (index = 0; index < max + 1; index++)
+		count[index] += count[index - 1];
+
+	print_array(count, max + 1);
+
+	for (index = 0; index < (int)size; index++)
 	{
-		count_array[array[i]]++;
+		final[count[array[index]] - 1] = array[index];
+		count[array[index]] -= 1;
 	}
-	for (j = 1; j < n; j++)
-	{
-		count_array[j + 1] += count_array[j];
-	}
-	print_array(count_array, n + 1);
-	aux = malloc(sizeof(int) * size);
-	for (i = 0; i < size; i++)
-	{
-		count_array[array[i]]--;
-		aux[count_array[array[i]]] = array[i];
-	}
-	for (i = 0; i < size; i++)
-	{
-		array[i] = aux[i];
-	}
-	free(aux);
-	free(count_array);
+	for (index = 0; index < (int)size; index++)
+		array[index] = final[index];
+
+	free(final);
+	free(count);
 }
